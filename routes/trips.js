@@ -15,30 +15,31 @@ var data = require("../trips.json");
 router.get("/", (req, res) => {
   console.log(data);
   res.json({ trips: data });
-  // res.send("ca marche encore mieux !");
-  // Trip.find().then((data) => res.json({ allTrips: data }));
 });
 
-// router.get("/lastTrip", (req, res) => {
-//   Trip.find().then((data) => {
-//     const lastTrip = data[data.length - 1];
-//     console.log(lastTrip);
+router.post("/search", (req, res) => {
+  const request = {
+    departure: req.body.departure.toLowerCase(),
+    arrival: req.body.arrival.toLowerCase(),
+    date: req.body.$date,
+  };
 
-//     res.json({ lastTrip });
-//   });
-// });
+  const resultList = data.filter(
+    (trip) =>
+      trip.departure.toLowerCase() === request.departure &&
+      trip.arrival.toLowerCase() === request.arrival.toLowerCase()
+  );
 
-router.post("/trips", (req, res) => {
-  const newTrip = new Trip({
-    departure: req.body.departure,
-    arrival: req.body.arrival,
-  });
-  newTrip.save().then(() => {
-    Trip.find().then((data) => {
-      console.log(data);
-      res.json({ allTrips: data });
-    });
-  });
+  res.json({ trips: resultList });
+
+  console.log(newTrip);
+
+  // newTrip.save().then(() => {
+  //   Trip.find().then((data) => {
+  //     console.log(data);
+  //     res.json({ allTrips: data });
+  //   });
+  // });
 });
 
 router.delete("/trips", (req, res) => {
@@ -49,5 +50,14 @@ router.delete("/trips", (req, res) => {
     })
   );
 });
+
+// router.get("/lastTrip", (req, res) => {
+//   Trip.find().then((data) => {
+//     const lastTrip = data[data.length - 1];
+//     console.log(lastTrip);
+
+//     res.json({ lastTrip });
+//   });
+// });
 
 module.exports = router;
