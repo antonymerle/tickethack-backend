@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
-var bookings = require("../data/bookingData");
-var cart = require("../data/cartData");
+const mongoose = require("mongoose");
+require("../models/connection");
 
 router.get("/", (req, res) => {
   res.json({ success: true, bookings });

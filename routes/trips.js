@@ -1,7 +1,10 @@
 var express = require("express");
 var router = express.Router();
+const mongoose = require("mongoose");
+require("../models/connection");
+const Trip = require("../models/trip");
 
-var data = require("../data/trips.json");
+// var data = require("../data/trips.json");
 
 /*
 {
@@ -14,8 +17,7 @@ var data = require("../data/trips.json");
 
 router.get("/", (req, res) => {
   // console.log(data);
-
-  res.json({ success: true, trips: data });
+  Trip.find().then((trips) => res.json({ success: true, trips: trips }));
 });
 
 router.post("/search", (req, res) => {
