@@ -2,30 +2,55 @@ var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
 require("../models/connection");
+const Booking = require("../models/booking");
+const Trip = require("../models/trip");
 
 router.get("/", (req, res) => {
-  res.json({ success: true, bookings });
+  // recherche par clé étrangère : "trip"
+  Booking.find()
+    .populate("trip")
+    .then((bookings) => res.json({ success: true, bookings }));
 });
 
 router.post("/", (req, res) => {
-  // console.log(data);
-
-  // TODO : vérifier si prix est un nombre
-  if (!cart || cart.length === 0) {
+  if (!req.body.tripId) {
     return res.json({
       success: false,
       message: `Le panier est vide`,
     });
   }
 
-  bookings = [...bookings, ...cart];
-  cart = [];
+  // recherche par clé étrangère (tripId) d'une autre collection (Trip)
+  Trip.findById(req.body.tripId).then((trip) => {
+    console.log(trip);
 
-  console.log("bookings mis à jour : ", bookings);
+    // On lie notre document Booking à un document d'une collection étrangère (Trip)
+    // grâce à la clé étrangère _id: req.body.tripId,
+    const newBooking = new Booking({
+      purchased: false,
+      trip: {
+        _id: req.body.tripId,
+        departure: trip.departure,
+        arrival: trip.arrival,
+        date: { date: trip.date },
+        price: trip.price,
+      },
+    });
+    newBooking
+      .save()
+      .then(() =>
+        Booking.find().then((bookings) => res.json({ success: true, bookings }))
+      );
+  });
 
-  console.log("cart mis à jour : ", cart);
+  // bookings = [...bookings, ...cart];
+  // cart = [];
 
-  res.json({ success: true, bookings });
+  // console.log("bookings mis à jour : ", bookings);
+
+  // console.log("cart mis à jour : ", cart);
 });
+
+router.delete("/", (req, res) => {});
 
 module.exports = router;
