@@ -13,8 +13,9 @@ var data = require("../trips.json");
 */
 
 router.get("/", (req, res) => {
-  console.log(data);
-  res.json({ trips: data });
+  // console.log(data);
+
+  res.json({ success: true, trips: data });
 });
 
 router.post("/search", (req, res) => {
@@ -45,15 +46,6 @@ router.post("/search", (req, res) => {
     success: true,
     trips: resultList,
   });
-
-  // console.log(newTrip);
-
-  // newTrip.save().then(() => {
-  //   Trip.find().then((data) => {
-  //     console.log(data);
-  //     res.json({ allTrips: data });
-  //   });
-  // });
 });
 
 router.delete("/trips", (req, res) => {
