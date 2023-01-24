@@ -18,6 +18,13 @@ router.get("/", (req, res) => {
 });
 
 router.post("/search", (req, res) => {
+  if (!req.body.departure || !req.body.arrival || !req.body.$date) {
+    return res.json({
+      success: false,
+      message: "Remplissez toutes les données du formulaire svp.",
+    });
+  }
+
   const request = {
     departure: req.body.departure.toLowerCase(),
     arrival: req.body.arrival.toLowerCase(),
@@ -25,14 +32,6 @@ router.post("/search", (req, res) => {
   };
 
   console.log("request : " + request.date);
-  // console.log("request : " + request.date);
-  // const test = data.filter(
-  //   (trip) =>
-
-  //     new Date(trip.date).getFullYear() == request.date.getFullYear() &&
-
-  // );
-
   const resultList = data.filter(
     (trip) =>
       trip.departure.toLowerCase() === request.departure &&
@@ -42,7 +41,10 @@ router.post("/search", (req, res) => {
       new Date(trip.date.$date).getDate() == request.date.getDate()
   );
 
-  res.json({ trips: resultList });
+  res.json({
+    success: true,
+    trips: resultList,
+  });
 
   // console.log(newTrip);
 
