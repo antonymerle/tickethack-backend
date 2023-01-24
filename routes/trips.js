@@ -21,18 +21,30 @@ router.post("/search", (req, res) => {
   const request = {
     departure: req.body.departure.toLowerCase(),
     arrival: req.body.arrival.toLowerCase(),
-    date: req.body.$date,
+    date: new Date(req.body.$date),
   };
+
+  console.log("request : " + request.date);
+  // console.log("request : " + request.date);
+  // const test = data.filter(
+  //   (trip) =>
+
+  //     new Date(trip.date).getFullYear() == request.date.getFullYear() &&
+
+  // );
 
   const resultList = data.filter(
     (trip) =>
       trip.departure.toLowerCase() === request.departure &&
-      trip.arrival.toLowerCase() === request.arrival.toLowerCase()
+      trip.arrival.toLowerCase() === request.arrival.toLowerCase() &&
+      new Date(trip.date.$date).getFullYear() == request.date.getFullYear() &&
+      new Date(trip.date.$date).getMonth() == request.date.getMonth() &&
+      new Date(trip.date.$date).getDate() == request.date.getDate()
   );
 
   res.json({ trips: resultList });
 
-  console.log(newTrip);
+  // console.log(newTrip);
 
   // newTrip.save().then(() => {
   //   Trip.find().then((data) => {
