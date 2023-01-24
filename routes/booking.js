@@ -42,15 +42,16 @@ router.post("/", (req, res) => {
         Booking.find().then((bookings) => res.json({ success: true, bookings }))
       );
   });
-
-  // bookings = [...bookings, ...cart];
-  // cart = [];
-
-  // console.log("bookings mis à jour : ", bookings);
-
-  // console.log("cart mis à jour : ", cart);
 });
 
-router.delete("/", (req, res) => {});
+router.delete("/", (req, res) => {
+  Booking.deleteOne({ _id: req.body.id }).then((data) => {
+    if (data.deletedCount > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+  });
+});
 
 module.exports = router;
