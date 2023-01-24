@@ -9,14 +9,14 @@ const mongoose = require("mongoose");
 
 */
 
-const dateSchema = mongoose.Schema({
-  $date: Date,
-});
+// const dateSchema = mongoose.Schema({
+//   date: Date,
+// });
 
 const tripSchema = mongoose.Schema({
   departure: String,
   arrival: String,
-  date: dateSchema,
+  date: { date: Date },
   price: Number,
 });
 

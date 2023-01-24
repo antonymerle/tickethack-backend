@@ -3,25 +3,16 @@ var router = express.Router();
 const mongoose = require("mongoose");
 require("../models/connection");
 const Trip = require("../models/trip");
-
-// var data = require("../data/trips.json");
-
-/*
-{
-  "departure":"Paris",
-"arrival":"Lyon",
-"date":{"$date":"2023-01-24T09:54:34.090Z"},
-"price":129}
-
-*/
+const getISODate = require("../lib/library");
+const moment = require("moment");
+const { startSession } = require("../models/trip");
 
 router.get("/", (req, res) => {
-  // console.log(data);
   Trip.find().then((trips) => res.json({ success: true, trips: trips }));
 });
 
 router.post("/search", (req, res) => {
-  if (!req.body.departure || !req.body.arrival || !req.body.$date) {
+  if (!req.body.departure || !req.body.arrival || !req.body.date) {
     return res.json({
       success: false,
       message: "Remplissez toutes les données du formulaire svp.",
@@ -29,24 +20,31 @@ router.post("/search", (req, res) => {
   }
 
   const request = {
-    departure: req.body.departure.toLowerCase(),
-    arrival: req.body.arrival.toLowerCase(),
-    date: new Date(req.body.$date),
+    departure: req.body.departure,
+    arrival: req.body.arrival,
+    dayStart: new Date(moment(req.body.date).startOf("day")),
+    dayEnd: new Date(moment(req.body.date).endOf("day")),
   };
 
-  console.log("request : " + request.date);
-  const resultList = data.filter(
-    (trip) =>
-      trip.departure.toLowerCase() === request.departure &&
-      trip.arrival.toLowerCase() === request.arrival.toLowerCase() &&
-      new Date(trip.date.$date).getFullYear() == request.date.getFullYear() &&
-      new Date(trip.date.$date).getMonth() == request.date.getMonth() &&
-      new Date(trip.date.$date).getDate() == request.date.getDate()
-  );
+  // const resultList = data.filter(
+  //   (trip) =>
+  //     trip.departure.toLowerCase() === request.departure &&
+  //     trip.arrival.toLowerCase() === request.arrival.toLowerCase() &&
+  //     new Date(trip.date.$date).getFullYear() == request.date.getFullYear() &&
+  //     new Date(trip.date.$date).getMonth() == request.date.getMonth() &&
+  //     new Date(trip.date.$date).getDate() == request.date.getDate()
+  // );
 
-  res.json({
-    success: true,
-    trips: resultList,
+  Trip.find({
+    date: {
+      $gte: request.dayStart,
+      $lte: request.dayEnd,
+    },
+  }).then((results) => {
+    res.json({
+      success: true,
+      trips: results,
+    });
   });
 });
 
@@ -58,14 +56,5 @@ router.delete("/trips", (req, res) => {
     })
   );
 });
-
-// router.get("/lastTrip", (req, res) => {
-//   Trip.find().then((data) => {
-//     const lastTrip = data[data.length - 1];
-//     console.log(lastTrip);
-
-//     res.json({ lastTrip });
-//   });
-// });
 
 module.exports = router;
