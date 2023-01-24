@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-var data = require("../trips.json");
+var data = require("../data/trips.json");
 
 /*
 {
