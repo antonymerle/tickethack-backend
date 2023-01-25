@@ -1,11 +1,8 @@
 var express = require("express");
 var router = express.Router();
-const mongoose = require("mongoose");
 require("../models/connection");
 const Trip = require("../models/trip");
-const getISODate = require("../lib/library");
 const moment = require("moment");
-const { startSession } = require("../models/trip");
 
 // vue 1
 

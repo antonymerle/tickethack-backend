@@ -17,12 +17,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use("/", indexRouter);
-
 app.get("/", (req, res) => {
   res.json({ message: "bienvenue sur le backend tickethack" });
 });
-// app.use("/users", usersRouter);
 app.use("/trips", tripsRouter);
 app.use("/cart", cartRouter);
 app.use("/purchase", purchaseRouter);
