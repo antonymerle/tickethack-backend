@@ -5,13 +5,9 @@ require("../models/connection");
 const Booking = require("../models/booking");
 const Trip = require("../models/trip");
 
-router.get("/", (req, res) => {
-  // recherche par clé étrangère : "trip"
-  Booking.find()
-    .populate("trip")
-    .then((bookings) => res.json({ success: true, bookings }));
-});
+// vue 2
 
+// ROUTE POST /cart : booke un trajet en le plaçant dans le panier (bouton book)
 router.post("/", (req, res) => {
   if (!req.body.tripId) {
     return res.json({
@@ -44,6 +40,15 @@ router.post("/", (req, res) => {
   });
 });
 
+// ROUTE GET /cart : afficher tous les billets non achetés
+router.get("/", (req, res) => {
+  // recherche par clé étrangère : "trip"
+  Booking.find({ purchased: false })
+    .populate("trip")
+    .then((bookings) => res.json({ success: true, bookings }));
+});
+
+// ROUTE DELETE /cart : retire un trajet du panier
 router.delete("/", (req, res) => {
   Booking.deleteOne({ _id: req.body.id }).then((data) => {
     if (data.deletedCount > 0) {

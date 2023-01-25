@@ -7,10 +7,17 @@ const getISODate = require("../lib/library");
 const moment = require("moment");
 const { startSession } = require("../models/trip");
 
+// vue 1
+
+// ROUTE GET /trips : afficher TOUS les trajets présents dans la BDD
 router.get("/", (req, res) => {
   Trip.find().then((trips) => res.json({ success: true, trips: trips }));
 });
 
+// ROUTE POST /trips/search : effectuer une recherce à partir des données du formulaire
+// departure
+// arrival
+// date (une journée)
 router.post("/search", (req, res) => {
   if (!req.body.departure || !req.body.arrival || !req.body.date) {
     return res.json({
@@ -26,15 +33,6 @@ router.post("/search", (req, res) => {
     dayEnd: new Date(moment(req.body.date).endOf("day")),
   };
 
-  // const resultList = data.filter(
-  //   (trip) =>
-  //     trip.departure.toLowerCase() === request.departure &&
-  //     trip.arrival.toLowerCase() === request.arrival.toLowerCase() &&
-  //     new Date(trip.date.$date).getFullYear() == request.date.getFullYear() &&
-  //     new Date(trip.date.$date).getMonth() == request.date.getMonth() &&
-  //     new Date(trip.date.$date).getDate() == request.date.getDate()
-  // );
-
   Trip.find({
     date: {
       $gte: request.dayStart,
@@ -46,16 +44,6 @@ router.post("/search", (req, res) => {
       trips: results,
     });
   });
-});
-
-// TODO : pas utile à supprimer ?
-router.delete("/trips", (req, res) => {
-  Trip.deleteMany({}).then(() =>
-    Trip.find().then((data) => {
-      console.log(data);
-      res.json({ allTrips: data });
-    })
-  );
 });
 
 module.exports = router;

@@ -4,11 +4,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
-// var indexRouter = require("./routes/index");
-// var usersRouter = require("./routes/users");
 var tripsRouter = require("./routes/trips");
-// var bookingRouter = require("./routes/booking");
 var cartRouter = require("./routes/cart");
+var purchaseRouter = require("./routes/purchase");
 
 var app = express();
 
@@ -26,7 +24,7 @@ app.get("/", (req, res) => {
 });
 // app.use("/users", usersRouter);
 app.use("/trips", tripsRouter);
-// app.use("/booking", bookingRouter);
 app.use("/cart", cartRouter);
+app.use("/purchase", purchaseRouter);
 
 module.exports = app;
