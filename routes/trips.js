@@ -31,6 +31,8 @@ router.post("/search", (req, res) => {
   };
 
   Trip.find({
+    departure: request.departure,
+    arrival: request.arrival,
     date: {
       $gte: request.dayStart,
       $lte: request.dayEnd,
