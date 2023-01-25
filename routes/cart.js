@@ -2,116 +2,56 @@ var express = require("express");
 var router = express.Router();
 const mongoose = require("mongoose");
 require("../models/connection");
-
-/*
-{
-  "departure":"Paris",
-"arrival":"Lyon",
-"date":{"$date":"2023-01-24T09:54:34.090Z"},
-"price":129}
-
-*/
-
-// let cart = [
-//   {
-//     departure: "Paris",
-//     arrival: "Bayonne",
-//     date: { $date: new Date("2023-01-29T00:00:00.000Z") },
-//     price: 120,
-//   },
-//   {
-//     departure: "Paris",
-//     arrival: "Marseille",
-//     date: { $date: new Date("2023-01-28T00:00:00.000Z") },
-//     price: 89,
-//   },
-// ];
-
-// let cart = [];
+const Booking = require("../models/booking");
+const Trip = require("../models/trip");
 
 router.get("/", (req, res) => {
-  // console.log(data);
-
-  res.json({ success: true, cart });
+  // recherche par clé étrangère : "trip"
+  Booking.find()
+    .populate("trip")
+    .then((bookings) => res.json({ success: true, bookings }));
 });
 
 router.post("/", (req, res) => {
-  // console.log(data);
-
-  // TODO : vérifier si prix est un nombre
-  if (
-    !req.body.departure ||
-    !req.body.arrival ||
-    !req.body.$date ||
-    !req.body.price
-  ) {
+  if (!req.body.tripId) {
     return res.json({
       success: false,
-      message: `Erreur dans la récupération du panier`,
+      message: `Le panier est vide`,
     });
   }
 
-  const request = {
-    departure: req.body.departure,
-    arrival: req.body.arrival,
-    date: { $date: new Date(req.body.$date) },
-    price: parseInt(req.body.price),
-  };
+  // recherche par clé étrangère (tripId) d'une autre collection (Trip)
+  Trip.findById(req.body.tripId).then((trip) => {
+    console.log(trip);
 
-  cart.push(request);
-  console.log(cart);
-
-  res.json({ success: true, cart });
+    // On lie notre document Booking à un document d'une collection étrangère (Trip)
+    // grâce à la clé étrangère _id: req.body.tripId,
+    const newBooking = new Booking({
+      purchased: false,
+      trip: {
+        _id: req.body.tripId,
+        departure: trip.departure,
+        arrival: trip.arrival,
+        date: { date: trip.date },
+        price: trip.price,
+      },
+    });
+    newBooking
+      .save()
+      .then(() =>
+        Booking.find().then((bookings) => res.json({ success: true, bookings }))
+      );
+  });
 });
 
 router.delete("/", (req, res) => {
-  // console.log(data);
-
-  // TODO : vérifier si prix est un nombre
-  if (
-    !req.body.departure ||
-    !req.body.arrival ||
-    !req.body.$date ||
-    !req.body.price
-  ) {
-    return res.json({
-      success: false,
-      message: `Erreur dans la récupération du voyage à supprimer`,
-    });
-  }
-
-  const request = {
-    departure: req.body.departure.toLowerCase(),
-    arrival: req.body.arrival.toLowerCase(),
-    date: new Date(req.body.$date),
-    price: parseInt(req.body.price),
-  };
-
-  // console.log("request object :", request);
-  // console.log("cart : ", cart);
-
-  console.log(
-    `${new Date(
-      cart[0].date.$date
-    ).getFullYear()}  != ${request.date.getFullYear()}`
-  );
-
-  const resultList = cart.filter(
-    (trip) =>
-      trip.departure.toLowerCase() != request.departure.toLowerCase() ||
-      trip.arrival.toLowerCase() != request.arrival.toLowerCase() ||
-      new Date(trip.date.$date).getFullYear() != request.date.getFullYear() ||
-      new Date(trip.date.$date).getMonth() != request.date.getMonth() ||
-      new Date(trip.date.$date).getDate() != request.date.getDate() ||
-      trip.price != request.price
-  );
-
-  console.log("resultList : ", resultList);
-
-  cart = [...resultList];
-
-  res.json({ success: true, cart });
+  Booking.deleteOne({ _id: req.body.id }).then((data) => {
+    if (data.deletedCount > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false });
+    }
+  });
 });
 
 module.exports = router;
-// module.exports = cart;

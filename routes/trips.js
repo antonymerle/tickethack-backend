@@ -48,6 +48,7 @@ router.post("/search", (req, res) => {
   });
 });
 
+// TODO : pas utile à supprimer ?
 router.delete("/trips", (req, res) => {
   Trip.deleteMany({}).then(() =>
     Trip.find().then((data) => {
