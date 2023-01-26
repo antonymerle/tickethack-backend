@@ -6,7 +6,7 @@ const Trip = require("../models/trip");
 
 // vue 2
 
-// ROUTE POST /cart : booke un trajet en le plaçant dans le panier (bouton book)
+// ROUTE POST /cart : booke un trajet en le plaçant dans le panier (bouton book) OK FRONTEND
 router.post("/", (req, res) => {
   if (!req.body.tripId) {
     return res.json({
@@ -39,7 +39,7 @@ router.post("/", (req, res) => {
   });
 });
 
-// ROUTE GET /cart : afficher tous les billets non achetés
+// ROUTE GET /cart : afficher tous les billets non achetés OK FRONTEND
 router.get("/", (req, res) => {
   // recherche par clé étrangère : "trip"
   Booking.find({ purchased: false })
@@ -47,7 +47,7 @@ router.get("/", (req, res) => {
     .then((bookings) => res.json({ success: true, bookings }));
 });
 
-// ROUTE DELETE /cart : retire un trajet du panier
+// ROUTE DELETE /cart : retire un trajet du panier OK FRONTEND
 router.delete("/", (req, res) => {
   Booking.deleteOne({ _id: req.body.id }).then((data) => {
     if (data.deletedCount > 0) {

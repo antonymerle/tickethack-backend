@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
   Trip.find().then((trips) => res.json({ success: true, trips: trips }));
 });
 
-// ROUTE POST /trips/search : effectuer une recherce à partir des données du formulaire
+// ROUTE POST /trips/search : effectuer une recherce à partir des données du formulaire OK FRONTEND
 // departure
 // arrival
 // date (une journée)
